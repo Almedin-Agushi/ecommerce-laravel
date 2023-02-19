@@ -83,6 +83,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::resource('slides', SlidesController::class)->middleware('role:admin');
 Route::resource('products', ProductsController::class);
+Route::get('products/category/{id}', [ProductsController::class, 'getProductsByCategory']);
 Route::resource('orders', OrdersController::class)->only(['index', 'destroy']);
 
 Route::resource('/comment', CommentController::class);
@@ -108,7 +109,7 @@ Route::middleware([
         } else {
             $orders = Order::count();
         }
-        
+
         return view('dashboard', [
             'slides' => Slide::count(),
             'products' => Product::count(),

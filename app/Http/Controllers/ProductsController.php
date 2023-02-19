@@ -25,6 +25,11 @@ class ProductsController extends Controller
         ]);
     }
 
+    // qikjo ti kthen veq prej kategoris me id qe ja ke jep
+    public function getProductsByCategory($id) {
+        $products = Product::where('category_id', $id).get();
+        return view('dashboard.products.index')->with('products', $products);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -63,7 +68,7 @@ class ProductsController extends Controller
             $name = pathinfo($file, PATHINFO_FILENAME);
             $ext = pathinfo($file, PATHINFO_EXTENSION);
             $image = time().'-'.$name.'.'.$ext;
-    
+
             Storage::putFileAs('public/products/', $request['image'], $image);
             $data['image'] = $image;
         }
@@ -86,7 +91,7 @@ class ProductsController extends Controller
         $product = Product::findOrFail($id);
         $comments = $product->comments()->get();
 
-        
+
         return view ('view-product', compact('product', 'comments'));
     }
 
@@ -119,7 +124,7 @@ class ProductsController extends Controller
             'color' => 'required',
             'description' => 'required',
         ]);
-        
+
         $data = $request->only(['name','qty','price','storage','color','description']);
         $product = Product::findOrFail($id);
 
@@ -129,12 +134,12 @@ class ProductsController extends Controller
                     $name = pathinfo($file, PATHINFO_FILENAME);
                     $ext = pathinfo($file, PATHINFO_EXTENSION);
                     $image = time().'-'.$name.'.'.$ext;
-                    
+
                     Storage::putFileAs('public/products/', $request['image'], $image);
                     $product->image = $image;
                 }
-                
-        
+
+
         $product->name = $request->name;
         $product->qty = $request->qty;
         $product->price = $request->price;
@@ -146,7 +151,7 @@ class ProductsController extends Controller
         if($product->save()) {
             return redirect()->route('products.index')->with('status', 'Product was updated successfully.');
         }
-        
+
         return redirect()->back()->with('status', 'Something want wrong!');
     }
 
@@ -159,7 +164,7 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        
+
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product successfully deleted.');
     }
